@@ -4,6 +4,7 @@
  */
 package com.mijuego.cuttherope;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,6 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
@@ -146,10 +149,18 @@ public class LoginScreen extends ScreenAdapter{
     private void validateLogin() {
         String user = usernameField.getText();
         String pass = passwordField.getText();
+        
+        ControlUsuarios controlUsuarios = new ControlUsuarios("usuarios.dat");
 
-        if (user.equals("admin") && pass.equals("1234")) {
+        Usuarios usuario = controlUsuarios.buscarUsuario(user);  // Buscar al usuario por nombre
+
+        if (usuario != null && usuario.getContraseña().equals(pass)) { // Verificar contraseña
             messageLabel.setText("¡Inicio de sesión exitoso!");
             messageLabel.setColor(Color.GREEN);
+
+            // Proceder a la pantalla del juego
+            World mundo = new World(new Vector2(0, -9.8f), true);
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen(mundo));
         } else {
             messageLabel.setText("Usuario o contraseña incorrectos.");
             messageLabel.setColor(Color.RED);
